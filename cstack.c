@@ -182,6 +182,14 @@ unsigned int stack_pop(const hstack_t stack, void* data_out, const unsigned int 
     }
 
     struct node* top_node = g_table.entries[stack].stack;
+    
+    if (data_out == NULL)
+    {
+        g_table.entries[stack].stack = top_node->prev;
+        free(top_node);
+        return 0;
+    }
+
     unsigned int copy_size;
     if (size < top_node->size)
     {
@@ -190,12 +198,8 @@ unsigned int stack_pop(const hstack_t stack, void* data_out, const unsigned int 
     {
         copy_size = top_node->size;
     }
-
-    if (data_out != NULL) 
-    {
-        memcpy(data_out, top_node->data, copy_size);
-    }
-
+    memcpy(data_out, top_node->data, copy_size);
+    
     g_table.entries[stack].stack = top_node->prev;
     free(top_node);
     return copy_size;
